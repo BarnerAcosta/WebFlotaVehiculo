@@ -47,32 +47,54 @@ Sistema web JSP para la gestión completa de una flota de vehículos con operaci
 
 ```
 WebFlotaVehiculo/
-├── .github/workflows/
-│   └── ci-cd.yml              # Pipeline CI/CD
+├── .github/
+│   └── workflows/
+│       └── ci-cd.yml          # Pipeline CI/CD automatizado
+│
 ├── db/
-│   └── concesionario.sql      # Script de inicialización BD
+│   └── concesionario.sql      # Script de inicialización MySQL
+│
 ├── scripts/
-│   ├── deploy.sh              # Script de despliegue
+│   ├── deploy.sh              # Despliegue completo
 │   ├── start.sh               # Iniciar contenedores
 │   ├── stop.sh                # Detener contenedores
 │   ├── clean.sh               # Limpiar proyecto
-│   └── db-backup.sh           # Backup de BD
-├── src/java/dao/
-│   └── conexionLib.java       # Gestión de conexiones BD
-├── web/                       # Archivos JSP
+│   └── db-backup.sh           # Backup de base de datos
+│
+├── src/
+│   └── java/
+│       └── dao/
+│           └── conexionLib.java    # Gestión de conexiones BD
+│
+├── web/                       # ⭐ Código fuente JSP (EDITAR AQUÍ)
 │   ├── listarVehi.jsp        # Listar vehículos
 │   ├── ver_vehiculo.jsp      # Ver detalle
 │   ├── editar_vehiculo.jsp   # Editar vehículo
 │   ├── eliminar_vehiculo.jsp # Eliminar vehículo
-│   └── registrarVehi.jsp     # Registrar vehículo
+│   ├── registrarVehi.jsp     # Registrar vehículo
+│   └── registrarTv.jsp       # Registrar tipo de vehículo
+│
+├── nbproject/                 # Configuración NetBeans
+│
+├── .gitignore                 # Archivos ignorados por Git
+├── build.xml                  # Script de compilación Apache Ant
 ├── docker-compose.yml         # Orquestación de contenedores
 ├── Dockerfile                 # Imagen personalizada Tomcat
 ├── Makefile                   # Comandos de automatización
-├── build.xml                  # Script de compilación Ant
-├── GUIA_DOCKER.md            # Guía de uso Docker
-├── COMANDOS.md               # Documentación de comandos
-└── README.md                 # Este archivo
+│
+├── README.md                  # 📖 Este archivo
+├── GUIA_DOCKER.md            # 🐳 Guía completa Docker
+├── COMANDOS.md               # 💻 Documentación comandos
+└── ENTREGABLES.md            # ✅ Checklist de entregables
 ```
+
+### 📝 Notas sobre la estructura:
+
+- **`web/`** - Código fuente JSP, editar siempre aquí
+- **`src/java/`** - Clases Java del proyecto
+- **`scripts/`** - Scripts de automatización bash
+- **`db/`** - Scripts de base de datos
+- **Carpetas ignoradas**: `build/`, `dist/`, `lib/`, `apache-tomcat-*/` (generadas automáticamente)
 
 ## 🚀 INICIO RÁPIDO
 
