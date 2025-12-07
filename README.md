@@ -1,77 +1,329 @@
 # 🚗 WebFlotaVehiculo - Sistema de Gestión de Vehículos
 
+[![CI/CD Pipeline](https://github.com/BarnerAcosta/WebFlotaVehiculo/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/BarnerAcosta/WebFlotaVehiculo/actions)
+
 ## 📋 Descripción
 
-Sistema web JSP para la gestión completa de una flota de vehículos con operaciones CRUD (Crear, Leer, Actualizar, Eliminar). Incluye interfaz profesional con Bootstrap/ACE y conexión directa a base de datos MySQL.
+Sistema web JSP para la gestión completa de una flota de vehículos con operaciones CRUD (Crear, Leer, Actualizar, Eliminar). Desplegado con Docker para fácil portabilidad y escalabilidad.
 
 ## 🛠️ Tecnologías Utilizadas
 
 - **Backend:** Java JSP
-- **Base de Datos:** MySQL (via XAMPP)
-- **Servidor:** Apache Tomcat 9.0.83
-- **Frontend:** Bootstrap, ACE Admin Template
-- **IDE Recomendado:** IntelliJ IDEA / NetBeans
+- **Base de Datos:** MySQL 5.7 (contenedor Docker)
+- **Servidor:** Apache Tomcat 9.0 con JDK 17 (contenedor Docker)
+- **Frontend:** Bootstrap, ACE Admin Template, DataTables
+- **Orquestación:** Docker Compose
+- **Build:** Apache Ant
+- **CI/CD:** GitHub Actions
+
+## 🐳 Arquitectura Docker
+
+```
+┌─────────────────────────────────────┐
+│   Navegador Web                     │
+│   http://localhost:8080             │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌──────────────────────────────────────┐
+│  Tomcat Container (tomcat_flota)     │
+│  - Puerto: 8080                      │
+│  - Imagen: tomcat:9.0-jdk17         │
+│  - App: WebFlotaVehiculo.war        │
+└──────────────┬───────────────────────┘
+               │ Conecta a mysql:3306
+               ▼
+┌──────────────────────────────────────┐
+│  MySQL Container                     │
+│  (mysql_concesionario)              │
+│  - Puerto: 3306                      │
+│  - Imagen: mysql:5.7                │
+│  - BD: concesionario                │
+│  - Volumen: mysql_data (persistente)│
+└──────────────────────────────────────┘
+```
 
 ## 📁 Estructura del Proyecto
 
 ```
 WebFlotaVehiculo/
-├── apache-tomcat-9.0.83/           # Servidor Tomcat
-├── src/java/                       # Código fuente Java
-├── web/                            # Archivos JSP y recursos web
-├── lib/                            # Librerías JAR
-├── INICIAR_TOMCAT_PERSISTENTE.bat  # Script para iniciar Tomcat
-└── README.md                       # Este archivo
+├── .github/workflows/
+│   └── ci-cd.yml              # Pipeline CI/CD
+├── db/
+│   └── concesionario.sql      # Script de inicialización BD
+├── scripts/
+│   ├── deploy.sh              # Script de despliegue
+│   ├── start.sh               # Iniciar contenedores
+│   ├── stop.sh                # Detener contenedores
+│   ├── clean.sh               # Limpiar proyecto
+│   └── db-backup.sh           # Backup de BD
+├── src/java/dao/
+│   └── conexionLib.java       # Gestión de conexiones BD
+├── web/                       # Archivos JSP
+│   ├── listarVehi.jsp        # Listar vehículos
+│   ├── ver_vehiculo.jsp      # Ver detalle
+│   ├── editar_vehiculo.jsp   # Editar vehículo
+│   ├── eliminar_vehiculo.jsp # Eliminar vehículo
+│   └── registrarVehi.jsp     # Registrar vehículo
+├── docker-compose.yml         # Orquestación de contenedores
+├── Dockerfile                 # Imagen personalizada Tomcat
+├── Makefile                   # Comandos de automatización
+├── build.xml                  # Script de compilación Ant
+├── GUIA_DOCKER.md            # Guía de uso Docker
+├── COMANDOS.md               # Documentación de comandos
+└── README.md                 # Este archivo
 ```
 
-## 🗄️ Base de Datos
-
-### Tablas Principales:
-- **vehiculo**: Almacena información de vehículos (placa, marca, referencia, modelo, id_tv)
-- **tipovehi**: Tipos de vehículos (IdTv, nomTv)
-
-### Configuración:
-- **Host:** localhost:3306
-- **Base de Datos:** concesionario
-- **Usuario:** root
-- **Contraseña:** (vacía)
-
-## 🚀 INSTALACIÓN Y CONFIGURACIÓN
+## 🚀 INICIO RÁPIDO
 
 ### Requisitos Previos
 
-1. **Java JDK 24** instalado
-2. **XAMPP** instalado y configurado
-3. **Windows 10/11**
+- Docker Desktop instalado
+- Git instalado
+- Apache Ant (opcional, para desarrollo)
 
-### Verificar Instalación de Java
+### Instalación en 3 pasos
 
-```cmd
-java -version
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/BarnerAcosta/WebFlotaVehiculo.git
+cd WebFlotaVehiculo
+
+# 2. Levantar los contenedores
+docker-compose up -d
+
+# 3. Esperar 30 segundos y acceder a:
+# http://localhost:8080/WebFlotaVehiculo/listarVehi.jsp
 ```
 
-Debe mostrar: `java version "24.0.2"`
+¡Eso es todo! La aplicación estará corriendo con datos de ejemplo.
 
-## 📝 PASO A PASO PARA EJECUTAR LA APLICACIÓN
+---
 
-### **PASO 1: Iniciar XAMPP (Base de Datos) 🗄️**
+## 📖 GUÍAS DISPONIBLES
 
-1. **Abrir XAMPP Control Panel:**
-   - Buscar "XAMPP Control Panel" en el menú de inicio
-   - Ejecutar como administrador (recomendado)
+- **[GUIA_DOCKER.md](GUIA_DOCKER.md)** - Guía completa de uso con Docker
+- **[COMANDOS.md](COMANDOS.md)** - Documentación de comandos Linux/Docker
 
-2. **Iniciar servicios necesarios:**
-   - Hacer clic en **"Start"** junto a **Apache**
-   - Hacer clic en **"Start"** junto a **MySQL**
-   - Ambos deben mostrar "Running" en verde
+---
 
-3. **Verificar funcionamiento:**
-   - Ir a: `http://localhost/phpmyadmin`
-   - Verificar que existe la base de datos **"concesionario"**
+## 🎯 USO CON MAKEFILE
 
-### **PASO 2: Verificar la Base de Datos 📊**
+```bash
+# Ver todos los comandos disponibles
+make help
+
+# Compilar proyecto
+make build
+
+# Desplegar (compilar + reconstruir + levantar)
+make deploy
+
+# Iniciar contenedores
+make start
+
+# Detener contenedores
+make stop
+
+# Ver logs
+make logs
+
+# Probar conexión a BD
+make test
+
+# Limpiar todo
+make clean
+```
+
+---
+
+## 🎯 USO CON SCRIPTS
+
+```bash
+# Dar permisos (solo en Linux/Mac)
+chmod +x scripts/*.sh
+
+# Desplegar aplicación
+./scripts/deploy.sh
+
+# Iniciar servicios
+./scripts/start.sh
+
+# Detener servicios
+./scripts/stop.sh
+
+# Limpiar proyecto
+./scripts/clean.sh all
+
+# Backup de base de datos
+./scripts/db-backup.sh
+```
+
+---
+
+## 🗄️ Base de Datos
+
+### Tablas:
+
+- **vehiculo**: placa (PK), marca, referencia, modelo, id_tv (FK)
+- **tipovehi**: IdTv (PK), nomTv
+
+### Acceso directo a MySQL:
+
+```bash
+# Conectarse a MySQL
+docker exec -it mysql_concesionario mysql -u root concesionario
+
+# Consulta rápida
+docker exec -i mysql_concesionario mysql -u root concesionario -e "SELECT * FROM vehiculo;"
+```
+
+---
+
+## 🌐 URLs de la Aplicación
+
+| Funcionalidad      | URL                                                                  |
+| ------------------ | -------------------------------------------------------------------- |
+| Lista de Vehículos | http://localhost:8080/WebFlotaVehiculo/listarVehi.jsp                |
+| Registrar Vehículo | http://localhost:8080/WebFlotaVehiculo/registrarVehi.jsp             |
+| Ver Detalle        | http://localhost:8080/WebFlotaVehiculo/ver_vehiculo.jsp?placa=ABC123 |
+| Tomcat Manager     | http://localhost:8080/manager/html (admin/admin)                     |
+
+---
+
+## 🛠️ DESARROLLO
+
+### Compilar después de cambios
+
+```bash
+# Opción 1: Con Makefile
+make deploy
+
+# Opción 2: Con comandos Docker
+ant dist
+docker-compose down
+docker-compose build --no-cache
+docker-compose up -d
+
+# Opción 3: Con script
+./scripts/deploy.sh
+```
+
+### Estructura de archivos importantes
+
+```
+web/                    ← EDITAR AQUÍ (código fuente JSP)
+src/java/dao/          ← Clases Java
+dist/                  ← Archivos compilados (generados)
+build/                 ← Archivos temporales (generados)
+```
+
+**IMPORTANTE:** Siempre edita archivos en `web/`, no en la raíz del proyecto.
+
+---
+
+## 🔄 CI/CD con GitHub Actions
+
+El proyecto incluye un pipeline automatizado que:
+
+✅ Compila el proyecto con Ant  
+✅ Construye imágenes Docker  
+✅ Ejecuta pruebas de integración  
+✅ Verifica que la BD funcione  
+✅ Genera artefactos (WAR)
+
+Ver: `.github/workflows/ci-cd.yml`
+
+---
+
+## 📊 VERIFICACIÓN COMPLETA
+
+```bash
+# Ver estado de contenedores
+docker ps
+
+# Verificar MySQL
+docker exec mysql_concesionario mysqladmin -u root ping
+
+# Verificar datos en BD
+docker exec -i mysql_concesionario mysql -u root concesionario -e "SELECT COUNT(*) FROM vehiculo;"
+
+# Verificar Tomcat
+curl http://localhost:8080
+
+# Verificar aplicación
+curl http://localhost:8080/WebFlotaVehiculo/listarVehi.jsp
+```
+
+---
+
+## 🗑️ LIMPIAR TODO
+
+```bash
+# Detener contenedores (mantiene datos)
+docker-compose down
+
+# Eliminar TODO incluyendo datos
+docker-compose down -v
+
+# Limpiar archivos compilados
+make clean
+
+# Limpiar archivos compilados + datos Docker
+make clean-all
+```
+
+---
+
+## 📝 Datos de Ejemplo
+
+El proyecto incluye 5 vehículos de prueba:
+
+- Toyota Corolla 2023
+- Honda Civic 2022
+- Yamaha MT-03 2021
+- Ford F-150 2023
+- Chevrolet NPR 2020
+
+---
+
+## 🤝 CONTRIBUIR
+
+1. Fork el proyecto
+2. Crea una rama (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit tus cambios (`git commit -m 'Agregar nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Abre un Pull Request
+
+---
+
+## 📄 Licencia
+
+Este proyecto es de código abierto y está disponible bajo la licencia MIT.
+
+---
+
+## 👤 Autor
+
+**BarnerAcosta**  
+GitHub: [@BarnerAcosta](https://github.com/BarnerAcosta)
+
+---
+
+## 📞 Soporte
+
+Si encuentras algún problema:
+
+1. Revisa la [GUIA_DOCKER.md](GUIA_DOCKER.md)
+2. Consulta [COMANDOS.md](COMANDOS.md)
+3. Abre un issue en GitHub
+
+---
+
+**Última actualización:** 7 de diciembre de 2025
 
 1. **Acceder a phpMyAdmin:**
+
    ```
    http://localhost/phpmyadmin
    ```
@@ -85,13 +337,16 @@ Debe mostrar: `java version "24.0.2"`
 ### **PASO 3: Iniciar Tomcat (Servidor de Aplicaciones) 🖥️**
 
 1. **Abrir Command Prompt:**
+
    - Presionar `Windows + R`
    - Escribir `cmd` y presionar Enter
 
 2. **Ejecutar script de Tomcat:**
+
    ```cmd
    "C:\Users\barne\OneDrive\Desktop\JAVA\JSP\WebFlotaVehiculo\INICIAR_TOMCAT_PERSISTENTE.bat"
    ```
+
    copy "C:\Users\barne\OneDrive\Desktop\JAVA\JSP\WebFlotaVehiculo\web\*.jsp" "C:\Users\barne\OneDrive\Desktop\JAVA\JSP\WebFlotaVehiculo\apache-tomcat-9.0.83\webapps\WebFlotaVehiculo\" && echo "✅ Archivos copiados correctamente - Listo para probar"
 
 3. **Esperar inicialización:**
@@ -112,38 +367,42 @@ Debe mostrar: `java version "24.0.2"`
 
 ### Páginas Principales
 
-| Funcionalidad | URL |
-|---------------|-----|
-| **Lista de Vehículos** | `http://localhost:8080/WebFlotaVehiculo/listarVehi.jsp` |
-| **Registrar Vehículo** | `http://localhost:8080/WebFlotaVehiculo/registrarVehi.jsp` |
-| **Registrar Tipo de Vehículo** | `http://localhost:8080/WebFlotaVehiculo/registrarTv.jsp` |
+| Funcionalidad                  | URL                                                        |
+| ------------------------------ | ---------------------------------------------------------- |
+| **Lista de Vehículos**         | `http://localhost:8080/WebFlotaVehiculo/listarVehi.jsp`    |
+| **Registrar Vehículo**         | `http://localhost:8080/WebFlotaVehiculo/registrarVehi.jsp` |
+| **Registrar Tipo de Vehículo** | `http://localhost:8080/WebFlotaVehiculo/registrarTv.jsp`   |
 
 ### Páginas de Gestión
 
-| Acción | URL | Descripción |
-|--------|-----|-------------|
-| **Ver Vehículo** | `ver_vehiculo.jsp?placa=XXX` | Detalles completos del vehículo |
-| **Editar Vehículo** | `editar_vehiculo.jsp?placa=XXX` | Formulario de edición |
-| **Eliminar Vehículo** | `eliminar_vehiculo.jsp?placa=XXX` | Confirmación de eliminación |
+| Acción                | URL                               | Descripción                     |
+| --------------------- | --------------------------------- | ------------------------------- |
+| **Ver Vehículo**      | `ver_vehiculo.jsp?placa=XXX`      | Detalles completos del vehículo |
+| **Editar Vehículo**   | `editar_vehiculo.jsp?placa=XXX`   | Formulario de edición           |
+| **Eliminar Vehículo** | `eliminar_vehiculo.jsp?placa=XXX` | Confirmación de eliminación     |
 
 ## 🔧 FUNCIONALIDADES
 
 ### ✅ Operaciones CRUD Completas
 
 #### **CREAR (Create)**
+
 - ➕ Registrar nuevos vehículos
 - ➕ Registrar nuevos tipos de vehículos
 
 #### **LEER (Read)**
+
 - 📋 Ver lista completa de vehículos
 - 👁️ Ver detalles de cada vehículo
 - 🔍 Buscar y filtrar vehículos
 
 #### **ACTUALIZAR (Update)**
+
 - ✏️ Editar cualquier vehículo (botón verde)
 - 🔄 Modificar placa, marca, referencia, modelo y tipo
 
 #### **ELIMINAR (Delete)**
+
 - 🗑️ Eliminar vehículos (botón rojo)
 - ⚠️ Confirmación de seguridad antes de eliminar
 
@@ -159,6 +418,7 @@ Debe mostrar: `java version "24.0.2"`
 ### Orden de Parada:
 
 1. **Parar Tomcat:**
+
    - Cerrar la ventana de Command Prompt donde está ejecutándose
    - O presionar `Ctrl + C` en esa ventana
 
@@ -217,6 +477,7 @@ Debe mostrar: `java version "24.0.2"`
 ### Personalizar Base de Datos
 
 Archivo de configuración en cada JSP:
+
 ```java
 String url = "jdbc:mysql://localhost:3306/concesionario";
 String usuario = "root";
@@ -226,12 +487,14 @@ String password = "";
 ## 📊 DATOS DE EJEMPLO
 
 ### Tipos de Vehículos por Defecto:
+
 - Automóvil
 - Motocicleta
 - Camión
 - Bus
 
 ### Vehículos de Ejemplo:
+
 - **ABC123** - Toyota Corolla (2023) - Automóvil
 - **DEF456** - Yamaha MT-03 (2021) - Motocicleta
 - **GHI789** - Chevrolet Spark GT (2020) - Automóvil
@@ -297,17 +560,21 @@ Sigue los pasos en orden y tendrás una aplicación web completamente funcional 
 ## 🚀 Cómo ejecutar el proyecto
 
 1. **Clona este repositorio desde GitHub:**
+
    ```
    git clone https://github.com/tu-usuario/WebFlotaVehiculo.git
    ```
+
    (Reemplaza la URL por la de tu repositorio una vez subido)
 
 2. **Restaura la base de datos MySQL:**
+
    - Abre tu gestor de MySQL (por ejemplo, phpMyAdmin o consola de MySQL).
    - Crea una base de datos nueva (por ejemplo, `flotavehiculo`).
    - Importa el archivo `database_setup.sql` incluido en el proyecto.
 
 3. **Configura la conexión a la base de datos en el proyecto:**
+
    - Verifica que los parámetros de conexión (usuario, contraseña, nombre de la base) en el código fuente coincidan con tu entorno local.
 
 4. **Inicia el servidor Tomcat:**

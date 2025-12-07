@@ -28,7 +28,13 @@ web/WEB-INF/
 # Archivos de prueba temporal
 TestConnection.java
 init_database.sql
+src/java/dao/TestConexion.java
 
 # Volúmenes de Docker (datos persistentes)
 mysql_data/
+
+# Backups
+backups/
+*.sql.gz
+*.tar.gz
 

@@ -1,0 +1,119 @@
+name: CI/CD Pipeline - WebFlotaVehiculo
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Configurar JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      - name: Instalar Apache Ant
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ant
+
+      - name: Verificar versiones
+        run: |
+          java -version
+          ant -version
+          docker --version
+          docker-compose --version
+
+      - name: Compilar proyecto con Ant
+        run: ant dist
+
+      - name: Verificar WAR generado
+        run: |
+          if [ -f "dist/WebFlotaVehiculo.war" ]; then
+            echo "✅ WAR generado exitosamente"
+            ls -lh dist/WebFlotaVehiculo.war
+          else
+            echo "❌ Error: WAR no encontrado"
+            exit 1
+          fi
+
+      - name: Levantar servicios Docker
+        run: docker-compose up -d
+
+      - name: Esperar a que los servicios estén listos
+        run: |
+          echo "Esperando MySQL..."
+          timeout 60 bash -c 'until docker exec mysql_concesionario mysqladmin ping -h localhost --silent; do sleep 2; done'
+          echo "✅ MySQL listo"
+
+          echo "Esperando Tomcat..."
+          sleep 30
+
+      - name: Verificar que Tomcat esté respondiendo
+        run: |
+          curl -f http://localhost:8080/ || exit 1
+          echo "✅ Tomcat respondiendo"
+
+      - name: Verificar base de datos
+        run: |
+          docker exec mysql_concesionario mysql -u root concesionario -e "SELECT COUNT(*) FROM vehiculo;"
+          docker exec mysql_concesionario mysql -u root concesionario -e "SELECT COUNT(*) FROM tipovehi;"
+          echo "✅ Base de datos funcionando"
+
+      - name: Ver logs en caso de fallo
+        if: failure()
+        run: |
+          echo "=== Logs de Tomcat ==="
+          docker logs tomcat_flota
+          echo "=== Logs de MySQL ==="
+          docker logs mysql_concesionario
+
+      - name: Detener servicios
+        if: always()
+        run: docker-compose down
+
+      - name: Subir artefacto WAR
+        uses: actions/upload-artifact@v3
+        with:
+          name: WebFlotaVehiculo-WAR
+          path: dist/WebFlotaVehiculo.war
+          retention-days: 30
+
+  docker-build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Configurar JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      - name: Instalar Apache Ant
+        run: sudo apt-get install -y ant
+
+      - name: Compilar proyecto
+        run: ant dist
+
+      - name: Construir imagen Docker
+        run: docker-compose build
+
+      - name: Verificar imagen creada
+        run: docker images | grep webflotavehiculo
+
+      - name: Limpiar
+        run: docker-compose down -v
