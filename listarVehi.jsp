@@ -600,13 +600,8 @@
 													ResultSet rs = null;
 
 													try {
-														// Conexión a la base de datos
-														String url = "jdbc:mysql://localhost:3306/concesionario";
-														String usuario = "root";
-														String password = "";
-
-														Class.forName("com.mysql.jdbc.Driver");
-														conn = DriverManager.getConnection(url, usuario, password);
+														// Usar la clase de conexión existente
+														conn = conexionLib.conectarnosBD();
 
 														// Consulta para obtener todos los vehículos con sus tipos
 														String sql = "SELECT v.placa, v.marca, v.referencia, v.modelo, v.id_tv, t.nomTv " +

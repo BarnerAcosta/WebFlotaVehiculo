@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*" %>
+<%@ page import="dao.conexionLib" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
@@ -66,13 +67,8 @@
                                 ResultSet rs = null;
 
                                 try {
-                                    // Conexión a la base de datos
-                                    String url = "jdbc:mysql://localhost:3306/concesionario";
-                                    String usuario = "root";
-                                    String password = "";
-
-                                    Class.forName("com.mysql.jdbc.Driver");
-                                    conn = DriverManager.getConnection(url, usuario, password);
+                                    // Usar la clase de conexión existente
+                                    conn = conexionLib.conectarnosBD();
 
                                     // Consulta para obtener los detalles del vehículo
                                     String sql = "SELECT v.placa, v.marca, v.referencia, v.modelo, v.id_tv, t.nomTv " +

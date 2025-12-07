@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*" %>
+<%@ page import="dao.conexionLib" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
@@ -61,12 +62,8 @@
                                 PreparedStatement pstmt = null;
 
                                 try {
-                                    String url = "jdbc:mysql://localhost:3306/concesionario";
-                                    String usuario = "root";
-                                    String password = "";
-
-                                    Class.forName("com.mysql.jdbc.Driver");
-                                    conn = DriverManager.getConnection(url, usuario, password);
+                                    // Usar la clase de conexión existente
+                                    conn = conexionLib.conectarnosBD();
 
                                     String sql = "UPDATE vehiculo SET placa=?, marca=?, referencia=?, modelo=?, id_tv=? WHERE placa=?";
                                     pstmt = conn.prepareStatement(sql);
@@ -142,12 +139,8 @@
                                 ResultSet rs = null;
 
                                 try {
-                                    String url = "jdbc:mysql://localhost:3306/concesionario";
-                                    String usuario = "root";
-                                    String password = "";
-
-                                    Class.forName("com.mysql.jdbc.Driver");
-                                    conn = DriverManager.getConnection(url, usuario, password);
+                                    // Usar la clase de conexión existente
+                                    conn = conexionLib.conectarnosBD();
 
                                     // Obtener datos del vehículo
                                     String sql = "SELECT * FROM vehiculo WHERE placa = ?";

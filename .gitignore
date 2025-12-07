@@ -1,11 +1,15 @@
 # Ignorar archivos y carpetas generados por IDEs, Tomcat y compilación
 .idea/
-nbproject/
+nbproject/private/
+nbbuild/
+nbdist/
 dist/
+build/
 *.iml
 *.class
 *.log
 *.tmp
+*.war
 .DS_Store
 Thumbs.db
 apache-tomcat-9.0.83/
@@ -20,4 +24,11 @@ test/
 web/assets/
 web/META-INF/
 web/WEB-INF/
+
+# Archivos de prueba temporal
+TestConnection.java
+init_database.sql
+
+# Volúmenes de Docker (datos persistentes)
+mysql_data/
 
