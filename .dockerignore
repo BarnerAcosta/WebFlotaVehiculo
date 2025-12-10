@@ -9,6 +9,9 @@ nbbuild/
 nbdist/
 .nb-gradle/
 
+# IMPORTANTE: NO excluir lib/ porque contiene dependencias necesarias
+# lib/
+
 # IDEs
 .vscode/
 .idea/

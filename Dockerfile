@@ -10,7 +10,12 @@ RUN apt-get update && \
 WORKDIR /build
 COPY src/ ./src/
 COPY web/ ./web/
-COPY lib/ ./lib/
+
+# Copiar SOLO las librerías necesarias (MySQL y JSTL)
+RUN mkdir -p ./lib/MySQLDriver ./lib/jstl
+COPY lib/MySQLDriver/ ./lib/MySQLDriver/
+COPY lib/jstl/ ./lib/jstl/
+
 COPY build-docker.xml ./build.xml
 
 # Compilar proyecto con Ant
