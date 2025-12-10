@@ -31,7 +31,7 @@ jobs:
           java -version
           ant -version
           docker --version
-          docker-compose --version
+          docker compose version
 
       - name: Compilar proyecto con Ant
         run: ant dist
@@ -47,7 +47,7 @@ jobs:
           fi
 
       - name: Levantar servicios Docker
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: Esperar a que los servicios estén listos
         run: |
@@ -79,7 +79,7 @@ jobs:
 
       - name: Detener servicios
         if: always()
-        run: docker-compose down
+        run: docker compose down
 
       - name: Subir artefacto WAR
         uses: actions/upload-artifact@v4
@@ -110,10 +110,10 @@ jobs:
         run: ant dist
 
       - name: Construir imagen Docker
-        run: docker-compose build
+        run: docker compose build
 
       - name: Verificar imagen creada
         run: docker images | grep webflotavehiculo
 
       - name: Limpiar
-        run: docker-compose down -v
+        run: docker compose down -v
