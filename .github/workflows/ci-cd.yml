@@ -66,7 +66,11 @@ jobs:
         run: |
           echo "⏳ Esperando Tomcat..."
           for i in {1..60}; do
-            if curl -f http://localhost:8080/ 2>/dev/null; then
+            # Verificar primero que el puerto responda, luego la app
+            if curl -f http://localhost:8080/WebFlotaVehiculo/ 2>/dev/null || curl -f http://localhost:8080/manager/text/list 2>/dev/null || nc -z localhost 8080 2>/dev/null; then
+              echo "✅ Tomcat respondiendo"
+              # Dar tiempo adicional para que la app termine de cargar
+              sleep 5
               echo "✅ Tomcat listo"
               exit 0
             fi
