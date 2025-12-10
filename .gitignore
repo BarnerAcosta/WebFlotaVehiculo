@@ -13,7 +13,7 @@ build/
 .DS_Store
 Thumbs.db
 apache-tomcat-9.0.83/
-lib/
+# lib/ - COMENTADO: necesitamos MySQLDriver y jstl en GitHub para Docker build
 test/
 
 # Ignorar archivos de sistema
