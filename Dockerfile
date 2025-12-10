@@ -8,10 +8,13 @@ RUN apt-get update && \
 
 # Copiar código fuente y dependencias
 WORKDIR /build
-COPY . .
+COPY src/ ./src/
+COPY web/ ./web/
+COPY lib/ ./lib/
+COPY build-docker.xml ./build.xml
 
 # Compilar proyecto con Ant
-RUN ant dist
+RUN ant -f build.xml dist
 
 # Etapa 2: Imagen final
 FROM tomcat:9.0-jdk17

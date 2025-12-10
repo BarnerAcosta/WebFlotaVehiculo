@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="WebFlotaVehiculo" default="dist" basedir=".">
+    <description>Build file para WebFlotaVehiculo (Docker compatible)</description>
+
+    <!-- Propiedades del proyecto -->
+    <property name="src.dir" value="src/java"/>
+    <property name="web.dir" value="web"/>
+    <property name="build.dir" value="build/web"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="war.name" value="WebFlotaVehiculo.war"/>
+
+    <!-- Classpath con las librerías necesarias -->
+    <path id="compile.classpath">
+        <fileset dir="${lib.dir}/MySQLDriver">
+            <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}/jstl">
+            <include name="**/*.jar"/>
+        </fileset>
+        <!-- Tomcat servlet API (ya incluido en la imagen base) -->
+        <fileset dir="/usr/local/tomcat/lib" erroronmissingdir="false">
+            <include name="servlet-api.jar"/>
+            <include name="jsp-api.jar"/>
+        </fileset>
+    </path>
+
+    <!-- Limpiar build anterior -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <!-- Inicializar directorios -->
+    <target name="init">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.dir}/WEB-INF"/>
+        <mkdir dir="${build.dir}/WEB-INF/classes"/>
+        <mkdir dir="${build.dir}/WEB-INF/lib"/>
+        <mkdir dir="${dist.dir}"/>
+    </target>
+
+    <!-- Compilar clases Java -->
+    <target name="compile" depends="init">
+        <javac srcdir="${src.dir}" 
+               destdir="${build.dir}/WEB-INF/classes"
+               includeantruntime="false"
+               encoding="UTF-8"
+               source="1.8"
+               target="1.8">
+            <classpath refid="compile.classpath"/>
+        </javac>
+    </target>
+
+    <!-- Copiar recursos web -->
+    <target name="copy-resources" depends="compile">
+        <!-- Copiar archivos JSP, HTML, CSS, JS -->
+        <copy todir="${build.dir}">
+            <fileset dir="${web.dir}">
+                <include name="**/*.jsp"/>
+                <include name="**/*.html"/>
+                <include name="**/*.css"/>
+                <include name="**/*.js"/>
+                <include name="**/*.png"/>
+                <include name="**/*.jpg"/>
+                <include name="**/*.gif"/>
+                <include name="assets/**"/>
+            </fileset>
+        </copy>
+
+        <!-- Copiar WEB-INF si existe -->
+        <copy todir="${build.dir}/WEB-INF" failonerror="false">
+            <fileset dir="${web.dir}/WEB-INF" erroronmissingdir="false">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+
+        <!-- Copiar librerías necesarias -->
+        <copy todir="${build.dir}/WEB-INF/lib" flatten="true">
+            <fileset dir="${lib.dir}/MySQLDriver">
+                <include name="**/*.jar"/>
+            </fileset>
+            <fileset dir="${lib.dir}/jstl">
+                <include name="**/*.jar"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- Generar WAR -->
+    <target name="dist" depends="copy-resources">
+        <war destfile="${dist.dir}/${war.name}" 
+             webxml="${web.dir}/WEB-INF/web.xml">
+            <fileset dir="${build.dir}"/>
+        </war>
+        <echo message="WAR creado: ${dist.dir}/${war.name}"/>
+    </target>
+
+    <!-- Target por defecto -->
+    <target name="all" depends="clean,dist"/>
+</project>

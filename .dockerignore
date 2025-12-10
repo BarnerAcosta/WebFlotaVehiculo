@@ -1,0 +1,47 @@
+# Archivos de build locales
+dist/
+build/
+target/
+
+# Configuración de NetBeans (causa problemas en Docker)
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Tomcat local
+apache-tomcat-*/
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentación
+*.md
+COMO_GUARDAR_CAMBIOS.md
+
+# Scripts locales
+*.bat
+*.sh
+
+# Temporales
+*.log
+*.tmp
+temp/
+logs/
+
+# Sistema
+.DS_Store
+Thumbs.db
