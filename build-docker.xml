@@ -89,7 +89,7 @@
     <!-- Generar WAR -->
     <target name="dist" depends="copy-resources">
         <war destfile="${dist.dir}/${war.name}" 
-             webxml="${web.dir}/WEB-INF/web.xml">
+             webxml="${build.dir}/WEB-INF/web.xml">
             <fileset dir="${build.dir}"/>
         </war>
         <echo message="WAR creado: ${dist.dir}/${war.name}"/>
