@@ -21,32 +21,13 @@ jobs:
           java-version: "17"
           distribution: "temurin"
 
-      - name: Instalar Apache Ant
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ant
-
       - name: Verificar versiones
         run: |
           java -version
-          ant -version
           docker --version
           docker compose version
 
-      - name: Compilar proyecto con Ant
-        run: ant dist
-
-      - name: Verificar WAR generado
-        run: |
-          if [ -f "dist/WebFlotaVehiculo.war" ]; then
-            echo "✅ WAR generado exitosamente"
-            ls -lh dist/WebFlotaVehiculo.war
-          else
-            echo "❌ Error: WAR no encontrado"
-            exit 1
-          fi
-
-      - name: Levantar servicios Docker
+      - name: Construir y levantar servicios Docker
         run: docker compose up -d
 
       - name: Esperar a que los servicios estén listos
