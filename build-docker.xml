@@ -69,8 +69,10 @@
         </copy>
 
         <!-- Copiar WEB-INF si existe -->
-        <copy todir="${build.dir}/WEB-INF" failonerror="false">
+        <copy todir="${build.dir}/WEB-INF" failonerror="true">
             <fileset dir="${web.dir}/WEB-INF" erroronmissingdir="false">
+                <include name="**/*.xml"/>
+                <include name="**/*.properties"/>
                 <include name="**/*"/>
             </fileset>
         </copy>
