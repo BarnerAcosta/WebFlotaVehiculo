@@ -23,7 +23,7 @@ test/
 # Ignorar archivos de despliegue
 web/assets/
 web/META-INF/
-web/WEB-INF/
+# web/WEB-INF/ - COMENTADO: necesitamos web.xml para Docker build
 
 # Archivos de prueba temporal
 TestConnection.java
