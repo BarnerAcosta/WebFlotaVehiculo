@@ -13,8 +13,44 @@ build/
 .DS_Store
 Thumbs.db
 apache-tomcat-9.0.83/
-# lib/ - COMENTADO: necesitamos MySQLDriver y jstl en GitHub para Docker build
 test/
+
+# Librerías NetBeans (solo MySQLDriver y jstl son necesarios para Docker)
+lib/CopyLibs/
+lib/DataBindingME*/
+lib/EclipseLink*/
+lib/JAVADB_DRIVER_LABEL/
+lib/JAXB-ENDORSED/
+lib/JWSAntTasks/
+lib/Java-EE-GlassFish*/
+lib/PostgreSQLDriver/
+lib/beans-binding/
+lib/eclipselink*/
+lib/ext/
+lib/groovy-all/
+lib/hamcrest/
+lib/hibernate4*/
+lib/j2me_common_ant/
+lib/javac-api/
+lib/javaee*/
+lib/jaxb/
+lib/jaxws21/
+lib/jpa*/
+lib/jsf*/
+lib/jsp-compilation*/
+lib/jsp-compiler/
+lib/junit_4/
+lib/metro/
+lib/mysql-connector-java-5.1.47.jar
+lib/nblibraries.properties
+lib/primefaces/
+lib/restapi/
+lib/restlib/
+lib/spring*/
+lib/struts/
+lib/swing-layout/
+lib/testng/
+lib/tomcat-servlet-api-9.0.12.jar
 
 # Ignorar archivos de sistema
 *.bak
@@ -23,7 +59,9 @@ test/
 # Ignorar archivos de despliegue
 web/assets/
 web/META-INF/
-# web/WEB-INF/ - COMENTADO: necesitamos web.xml para Docker build
+web/WEB-INF/glassfish-web.xml
+web/WEB-INF/lib/
+# web/WEB-INF/web.xml - NO ignorar, necesario para Docker build
 
 # Archivos de prueba temporal
 TestConnection.java
